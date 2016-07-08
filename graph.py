@@ -36,11 +36,26 @@ class Vertex(object):
     def __cmp__(self, other):
         return self.f - other.f
 
+    """Hash function"""
+    def __hash__(self):
+        return hash((self.y, self.x))
+
+    """Function to extract coordinate tuple to use as key"""
+    def getCoordTuple(self):
+        return (self.y, self.x)
+
+
 class Edge(object):
     """Edge Class"""
     def __init__(self, v1, v2):
         super(Edge, self).__init__()
         self.vertices = (v1, v2)
+
+    """Convenience function to get neighbor with respect to given vertex"""
+    def getNeighbor(self, firstV):
+        for v in self.vertices:
+            if v != firstV:
+                return v
 
     """String representation"""
     def __str__(self):

@@ -6,10 +6,10 @@ class Fringeheap(object):
         super(Fringeheap, self).__init__()
         self.heap = []
 
-    def enqueue(self, v):
+    def push(self, v):
         heapq.heappush(self.heap, v)
 
-    def dequeue(self):
+    def pop(self):
         return heapq.heappop(self.heap)
 
     def peek(self):
@@ -17,3 +17,6 @@ class Fringeheap(object):
 
     def isEmpty(self):
         return len(self.heap) <= 0
+
+    def contains(self, test):
+        return test in self.heap

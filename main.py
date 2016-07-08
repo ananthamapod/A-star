@@ -9,16 +9,59 @@ def h(key, goal):
 
 """A* algorithm"""
 def a_star(g, start, end):
+    # bookkeeping structures, visited set and parents map
+    visited = set()
+    parents = {}
+
+    # internal function for generating the path from the parents map
+    def generatePath(origin, goal):
+        path = []
+        curr = goal
+        while curr != origin:
+            path.append(curr)
+            curr = parents.get(curr.getCoordTuple)
+        path.append(origin)
+        path.reverse()
+        return path
+
+    start = g.v.get(start)
+    goal = g.v.get(end)
+
+    # preliminary input checks
+    if not start or not goal:
+        if not start:
+            print "Not a valid starting node!"
+        if not goal:
+            print "Not a valid starting node!"
+        return None
+
     for k,v in g.v.iteritems():
         v.updateHeuristic(h(k, end))
-    visited = set()
+
+    import pdb; pdb.set_trace()
     fringe = Fringeheap()
-    parents = {}
-    start = g.v.get(start)
     start.updateCost(0)
-    fringe.enqueue(start)
+    fringe.push(start)
+
     while not fringe.isEmpty():
-        pass
+        curr = fringe.dequeue()
+        if curr == goal:
+            return generatePath(curr)
+        visited.add(curr)
+        key = curr.getCoordTuple()
+        for e in g.e.get(key):
+            nKey = e.getNeighbor(key)
+            neighbor = g.v.get(nKey)
+            if neighbor in visited:
+                continue
+            cost = curr.getCost() + 1
+            if not fringe.contains(neighbor):
+                fringe.push(neighbor)
+            elif cost >= neighbor.getCost():
+                continue
+            parents[nKey] = curr
+            neighbor.updateCost(cost)
+    return None
 
 """Clears the stored bookkeeping values in the graph vertices left over from previous search"""
 def clearSearch(g):
@@ -73,9 +116,11 @@ def main():
 
     if raw_input("Raw search?(y/n): ") == "y":
         raw_search(g, width, height)
-    import pdb; pdb.set_trace()
-    a_star(g, (0,0),(11,11))
-    print "a"
+    #import pdb; pdb.set_trace()
+    path = a_star(g, (0,0),(11,11))
+    if path == None:
+        print "No valid path could be find"
+        clearSearch(g)
 
 if __name__ == '__main__':
     main()
