@@ -1,9 +1,22 @@
 from parser import readMazeFromFile
 from graph import Graph, Edge
+import math
 
-def a_star(graph, start, end):
-    pass
+"""Heuristic calculation function, uses Euclidean distance"""
+def h(key, goal):
+    return math.sqrt((key[0]-goal[0])**2 + (key[1]-goal[1])**2)
 
+"""A* algorithm"""
+def a_star(g, start, end):
+    for k,v in g.v.iteritems():
+        v.updateHeuristic(h(k, end))
+
+def clearSearch(g):
+    for v in g.v:
+        v.updateCost(0)
+        v.updateHeuristic(0.0)
+
+"""Function for constructing graph from parsed maze data"""
 def constructGraph(g, data, height, width):
     for i in xrange(height):
         for j in xrange(width):
@@ -26,20 +39,20 @@ def constructGraph(g, data, height, width):
                         key2 = (i+1, j)
                         g.addEdge(key1, key2)
 
-def raw_search(g):
+"""Checker function that searches through graph structure to check existence of vertices"""
+def raw_search(g, width, height):
     while True:
         try:
             a = int(raw_input("search: "))
-            print a
-            for i in xrange(width):
-                print a
-                if not g.v.get((a, i)):
-                    print i
+            if a >= 0 and a < height:
+                for i in xrange(width):
+                    if not g.v.get((a, i)):
+                        print i
         except Exception as e:
             break
 
 def main():
-    filename = raw_input("Enter the name of the maze file: ")
+    filename = "maze.txt"#raw_input("Enter the name of the maze file: ")
     g = Graph()
     height, width, data = readMazeFromFile("tests/" + filename, None)
     constructGraph(g, data, height, width)
@@ -48,8 +61,11 @@ def main():
     for i in xrange(height):
         print data[i]
 
-    if raw_input("Search?(y/n): ") == "y":
-        raw_search(g)
+    if raw_input("Raw search?(y/n): ") == "y":
+        raw_search(g, width, height)
+    import pdb; pdb.set_trace()
+    a_star(g, (0,0),(11,11))
+    print "a"
 
 if __name__ == '__main__':
     main()

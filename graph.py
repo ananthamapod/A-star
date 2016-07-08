@@ -1,17 +1,21 @@
-class Edge(object):
-    """Edge Class, includes fields for cost and heuristic values"""
-    def __init__(self, v1, v2):
-        super(Edge, self).__init__()
-        self.vertices = (v1, v2)
-        self.h = 0
-        self.g = 0
+class Vertex(object):
+    """Vertex Class, includes fields for cost and heuristic values"""
+    def __init__(self, y, x):
+        super(Vertex, self).__init__()
+        self.y = y
+        self.x = x
+        self.h = 0.0
+        self.g = float('inf')
+        self.f = float('inf')
 
     """Setters"""
     def updateCost(self, g):
         self.g = g
+        self.f = self.g + self.h
 
     def updateHeuristic(self, h):
         self.h = h
+        self.f = self.g + self.h
 
     """Getters"""
     def getCost(self):
@@ -23,9 +27,25 @@ class Edge(object):
     """String representation"""
     def __str__(self):
         return str({
-            "vs" : self.vertices,
+            "pos" : (self.y, self.x),
             "h" : self.h,
             "g" : self.g
+        })
+
+    """Comparison function"""
+    def __cmp__(self, other):
+        return
+
+class Edge(object):
+    """Edge Class"""
+    def __init__(self, v1, v2):
+        super(Edge, self).__init__()
+        self.vertices = (v1, v2)
+
+    """String representation"""
+    def __str__(self):
+        return str({
+            "vs" : self.vertices
         })
 
     """Comparison function"""
@@ -43,9 +63,10 @@ class Graph(object):
         self.v = {}
         self.e = {}
 
-    def addVertex(self, x, y):
-        key = (x, y)
-        self.v[key] = True
+    def addVertex(self, y, x):
+        key = (y, x)
+        v = Vertex(y, x)
+        self.v[key] = v
         self.e[key] = []
 
     def addEdge(self, key1, key2):
@@ -59,10 +80,15 @@ class Graph(object):
         else:
             raise Exception("One of both of those vertices do not exist")
 
-
     """ String representation"""
     def __str__(self):
         return str({
             "v" : str(self.v),
             "e" : str(self.e)
         })
+
+    def printEdges(self):
+        for k,v in self.e.iteritems():
+            print k
+            print map(str, v)
+            raw_input(">")
