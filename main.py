@@ -1,5 +1,6 @@
 from parser import readMazeFromFile
 from graph import Graph, Edge
+from fringeheap import Fringeheap
 import math
 
 """Heuristic calculation function, uses Euclidean distance"""
@@ -10,10 +11,19 @@ def h(key, goal):
 def a_star(g, start, end):
     for k,v in g.v.iteritems():
         v.updateHeuristic(h(k, end))
+    visited = set()
+    fringe = Fringeheap()
+    parents = {}
+    start = g.v.get(start)
+    start.updateCost(0)
+    fringe.enqueue(start)
+    while not fringe.isEmpty():
+        pass
 
+"""Clears the stored bookkeeping values in the graph vertices left over from previous search"""
 def clearSearch(g):
     for v in g.v:
-        v.updateCost(0)
+        v.updateCost(float("inf"))
         v.updateHeuristic(0.0)
 
 """Function for constructing graph from parsed maze data"""

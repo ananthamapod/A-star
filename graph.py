@@ -34,7 +34,7 @@ class Vertex(object):
 
     """Comparison function"""
     def __cmp__(self, other):
-        return
+        return self.f - other.f
 
 class Edge(object):
     """Edge Class"""
