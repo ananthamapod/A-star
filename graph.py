@@ -34,6 +34,14 @@ class Vertex(object):
 
     """Comparison function"""
     def __cmp__(self, other):
+        inf1 = self.f == float("inf")
+        inf2 = other.f == float("inf")
+        if inf1 and not inf2:
+            return 1
+        if inf2 and not inf1:
+            return -1
+        if inf2 and inf1:
+            return 0
         return self.f - other.f
 
     """Hash function"""

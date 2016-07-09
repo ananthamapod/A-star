@@ -15,11 +15,12 @@ def a_star(g, start, end):
 
     # internal function for generating the path from the parents map
     def generatePath(origin, goal):
+        #import pdb; pdb.set_trace()
         path = []
         curr = goal
-        while curr != origin:
+        while curr.getCoordTuple() != origin.getCoordTuple():
             path.append(curr)
-            curr = parents.get(curr.getCoordTuple)
+            curr = parents.get(curr.getCoordTuple())
         path.append(origin)
         path.reverse()
         return path
@@ -32,21 +33,20 @@ def a_star(g, start, end):
         if not start:
             print "Not a valid starting node!"
         if not goal:
-            print "Not a valid starting node!"
+            print "Not a valid ending node!"
         return None
 
     for k,v in g.v.iteritems():
         v.updateHeuristic(h(k, end))
 
-    import pdb; pdb.set_trace()
     fringe = Fringeheap()
     start.updateCost(0)
     fringe.push(start)
 
     while not fringe.isEmpty():
-        curr = fringe.dequeue()
-        if curr == goal:
-            return generatePath(curr)
+        curr = fringe.pop()
+        if curr.getCoordTuple() == goal.getCoordTuple():
+            return generatePath(start, curr)
         visited.add(curr)
         key = curr.getCoordTuple()
         for e in g.e.get(key):
@@ -65,7 +65,7 @@ def a_star(g, start, end):
 
 """Clears the stored bookkeeping values in the graph vertices left over from previous search"""
 def clearSearch(g):
-    for v in g.v:
+    for k,v in g.v.iteritems():
         v.updateCost(float("inf"))
         v.updateHeuristic(0.0)
 
@@ -105,9 +105,9 @@ def raw_search(g, width, height):
             break
 
 def main():
-    filename = "maze.txt"#raw_input("Enter the name of the maze file: ")
+    filename = raw_input("Enter the path to the maze file: ")
     g = Graph()
-    height, width, data = readMazeFromFile("tests/" + filename, None)
+    height, width, data = readMazeFromFile(filename, None)
     constructGraph(g, data, height, width)
 
 
@@ -116,11 +116,25 @@ def main():
 
     if raw_input("Raw search?(y/n): ") == "y":
         raw_search(g, width, height)
-    #import pdb; pdb.set_trace()
-    path = a_star(g, (0,0),(11,11))
+
+    print "Please provide start and goal for the search: "
+    path = None
+    try:
+        startx = int(raw_input("starting index x: "))
+        starty = int(raw_input("starting index y: "))
+        goalx = int(raw_input("ending index x: "))
+        goaly = int(raw_input("ending index y: "))
+
+        path = a_star(g, (starty,startx),(goaly,goalx))
+    except Exception as e:
+        pass
+    
     if path == None:
-        print "No valid path could be find"
+        print "No valid path could be found"
         clearSearch(g)
+    else:
+        for i in path:
+            print i.getCoordTuple()
 
 if __name__ == '__main__':
     main()
